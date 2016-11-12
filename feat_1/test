@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+package elsa.facade;
+
+enum AccessFrom {
+  ANONYMOUS = 0;
+  AUDIO_PC = 101;
+  AUDIO_CHORONG = 102;
+  AUDIO_TELEPHONE = 103; // phone
+  AUDIO_SIP = 104; // VOIP protocol
+  AUDIO_ANDROID = 105;
+  AUDIO_IPHONE = 106;
+  WEB_MESSENGER = 201; // messenger
+  WEB_API = 202; // web api access
+  TEXT_MESSENGER = 301;
+  TEXT_ANDROID = 302;
+  TEXT_IPHONE = 303;
+}
+
+enum AuthenticationResult {
+  AUTH_UNKNOWN = 0;
+  AUTH_SUCCESS = 1;
+  AUTH_FAIL_COMMUNICATION = 100;
+  AUTH_FAIL_EMAIL_UNVERIFIED = 200;
+  AUTH_FAIL_EMAIL_NOTFOUND = 201;
+  AUTH_FAIL_CURL_INIT = 300;
+  AUTH_FAIL_CURL_PERFORM = 301;
+}
+
+
+message Caller {
+  string svc_group = 1;
+  string name = 2;
+  string email = 3;
+  string phone_no = 4;
+  map<string, string> properties = 5;
+  AccessFrom accessFrom = 6;
+}
+
+message DialogAgent {
+  string name = 1;
+  string lang = 2;
+  string description = 3;
+  string version = 4;
+  string domain = 5;
+  map<string, string> properties = 6;
+}
+
+/**
+ *
+ */
+message Session {
+  int64 id = 1;
+  string svc_group = 2;
+  string user_key = 3;
+  AccessFrom accessFrom = 4;
+  map<string, string> contexts = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Duration duration = 7;
+  bool human_assisted = 8;
+}
+
+message SessionKey {
+  int64 session_id = 1;
+}
+
+message AudioUtter {
+  bytes utter = 1;
+}
+
+message TextUtter {
+  string utter = 1;
+}
+
+enum DialogResult {
+  OK = 0;
+  USER_INVLIDATED = 101;
+  SERVICE_GROUP_NOT_FOUND = 102;
+  SESSION_NOT_FOUND = 103;
+  SESSION_INVLIDATED = 104;
+
+  EMPTY_IN = 201;
+
+  DOMAIN_CLASSIFIER_FAILED = 301;
+  DIALOG_AGENT_NOT_FOUND = 302;
+  DIALOG_AGENT_INVALIDATED = 303;
+  LAST_DIALG_AGENT_LOST = 304;
+  CHATBOT_NOT_FOUND = 305;
+  HUMAN_AGENT_NOT_FOUND = 306;
+  SECONDARY_DIALOG_CONFLICT = 311;
+  LAST_AGENT_NOT_FOUND = 312;
+  DUPLICATED_DOMAIN_RESOLVED = 313;
+  SECONDARY_DIALOG_AGENT_IS_MULTI_TURN = 314;
+
+  INTERNAL_ERROR = 500;
+}
